@@ -1,0 +1,14 @@
+hash: 22e38c1ce0eb919e5bc6b292a115c5367a44c455ff42f85f54d3212a3db1fc74
+updated: 2016-08-09T13:17:13.626425093-05:00
+imports:
+- name: github.com/hashicorp/consul
+  version: 3bcc819312e1f1a61326b8097eec656ff233f1ee
+  subpackages:
+  - api
+- name: github.com/inconshreveable/mousetrap
+  version: 76626ae9c91c4f2a10f34cad8ce83ea42c93bb75
+- name: github.com/spf13/cobra
+  version: 7c674d9e72017ed25f6d2b5e497a1368086b6a6f
+- name: github.com/spf13/pflag
+  version: f676131e2660dc8cd88de99f7486d34aa8172635
+devImports: []
