@@ -1,9 +1,14 @@
 // remote state store for peer information and coordination
 package state
 
+import (
+  "time"
+)
+
 type Peer struct {
   Host string
   Ip string
+  LastSeen time.Time
 }
 
 type Config struct {

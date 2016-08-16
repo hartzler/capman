@@ -2,9 +2,9 @@
 package state
 
 import (
+  "encoding/json"
   "fmt"
-  "strings"
-  //"net/http"
+  "time"
   "github.com/hashicorp/consul/api"
 )
 
@@ -39,9 +39,13 @@ func NewConsul(config Config, consulConfig ConsulConfig) ExternalState {
 func (self *consul) Heartbeat() error {
   fmt.Println("Posting my info to peers: ", self.config.Me)
   kv := self.client.KV()
-  key := fmt.Sprintf("%s/peers/%s=%s", self.config.Prefix, self.config.Me.Host, self.config.Me.Ip)
-  p := &api.KVPair{Key: key, Value: []byte("peer")}
-  _, err := kv.Put(p, nil)
+  key := fmt.Sprintf("%s/peers/%s", self.config.Prefix, self.config.Me.Host)
+  self.config.Me.LastSeen = time.Now()
+  bytes, err := json.Marshal(self.config.Me)
+  if err != nil {
+    return err
+  }
+  _, err = kv.Put(&api.KVPair{Key: key, Value: bytes}, nil)
   return err
 }
 
@@ -54,12 +58,13 @@ func (self *consul) Peers() ([]Peer, error) {
   }
   peers := make([]Peer, len(pairs))
   for i, pair := range pairs {
-    parts := strings.Split(pair.Key, "=")
-    keyParts := strings.Split(parts[0], "/")
-    peers[i] = Peer{
-      Host: keyParts[len(keyParts)-1], // last element in path
-      Ip: parts[1],
+    var peer Peer
+    err := json.Unmarshal(pair.Value, &peer)
+    if err != nil {
+      fmt.Println("Error decoding peer record:s", pair.Key, "skipping...", err)
+      continue
     }
+    peers[i] = peer
   }
   return peers, nil
 }

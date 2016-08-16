@@ -1,14 +1,22 @@
-hash: 22e38c1ce0eb919e5bc6b292a115c5367a44c455ff42f85f54d3212a3db1fc74
-updated: 2016-08-09T13:17:13.626425093-05:00
+hash: 128e70f49e33dda96bd9df502092042ff2ec2beec8d48bcde9ee5b279486eb11
+updated: 2016-08-15T14:10:40.425590063-05:00
 imports:
 - name: github.com/hashicorp/consul
-  version: 3bcc819312e1f1a61326b8097eec656ff233f1ee
+  version: e26b7352643a187d2e4842436daf01adc36f7c89
   subpackages:
   - api
+- name: github.com/hashicorp/go-cleanhttp
+  version: ad28ea4487f05916463e2423a55166280e8254b5
+- name: github.com/hashicorp/serf
+  version: 8fe28c24918f60d1ce0f9c1ac1189fe8297f2a16
+  subpackages:
+  - coordinate
 - name: github.com/inconshreveable/mousetrap
   version: 76626ae9c91c4f2a10f34cad8ce83ea42c93bb75
+- name: github.com/mitchellh/gox
+  version: c9740af9c6574448fd48eb30a71f964014c7a837
 - name: github.com/spf13/cobra
   version: 7c674d9e72017ed25f6d2b5e497a1368086b6a6f
 - name: github.com/spf13/pflag
-  version: f676131e2660dc8cd88de99f7486d34aa8172635
+  version: 01665e1eb3d0533dca0e5acffdff9eec1fcb886f
 devImports: []

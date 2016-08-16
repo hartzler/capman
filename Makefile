@@ -16,6 +16,16 @@ test:
 	go test $(TEST) $(TESTARGS) -timeout=30s -parallel=4
 	go vet $(TEST)
 
+bootstrap-dist:
+	go get -u github.com/mitchellh/gox
+
+build-all:
+	gox -verbose \
+	-ldflags "-X main.version=${VERSION}" \
+	-os="linux darwin" \
+	-arch="amd64" \
+	-output="dist/{{.OS}}-{{.Arch}}/{{.Dir}}" .
+
 package: test
 	$(eval FILES := $(shell ls build))
 	@mkdir -p build/tgz
@@ -24,4 +34,4 @@ package: test
 		echo $$f; \
 	done
 
-.PHONY: all deps updatedeps build test package
+.PHONY: all deps updatedeps build test bootstrap-dist build-all package

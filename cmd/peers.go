@@ -2,6 +2,7 @@ package cmd
 
 import (
   "fmt"
+  "time"
   "github.com/spf13/cobra"
 )
 
@@ -18,6 +19,14 @@ var peersCmd = cobra.Command{
     if err != nil {
       panic(err)
     }
-    fmt.Println("Peers: ", peers)
+    healthyT := time.Now().Add(-time.Second*60)
+    fmt.Println("Peers: ")
+    for _, peer := range peers {
+      health := "unhealthy"
+      if peer.LastSeen.After(healthyT) {
+        health = "healthy"
+      }
+      fmt.Println(peer.Host, peer.Ip, health)
+    }
   },
 }
