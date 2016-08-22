@@ -1,31 +1,39 @@
-// remote state store for peer information and coordination
+// Package state stores and retrieves the peer information for coordination.
+// Different backend stores should be supported.  Currently only Consul is.
 package state
 
 import (
-  "time"
+	"time"
 )
 
+// Peer represents the state of a peer
 type Peer struct {
-  Host string
-  Ip string
-  LastSeen time.Time
+	Host     string
+	IP       string
+	LastSeen time.Time
 }
 
-func (self Peer) IsHealthy(duration time.Duration) bool {
-  healthyT := time.Now().Add(-duration)
-  return self.LastSeen.After(healthyT)
+// IsHealthy determines if this peer is in a healthy state.
+func (p Peer) IsHealthy(duration time.Duration) bool {
+	healthyT := time.Now().Add(-duration)
+	return p.LastSeen.After(healthyT)
 }
 
+// Initialized stores information about when the cluster was
 type Initialized struct {
-  First time.Time
+	First time.Time
 }
 
+// Config is the high level settings for running capman
 type Config struct {
-  Me Peer
-  Prefix string // the prefix for the remote state
+	Me     Peer
+	Prefix string // the prefix for the remote state
 }
 
+// ExternalState is the interface for dealing with the external state store.
 type ExternalState interface {
-  Heartbeat() error
-  Peers() ([]Peer, error)
+	IsInitialized() (Initialized, error)
+	SetInitialized() (Initialized, error)
+	Heartbeat() error
+	Peers() ([]Peer, error)
 }
