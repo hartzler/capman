@@ -11,6 +11,15 @@ type Peer struct {
   LastSeen time.Time
 }
 
+func (self Peer) IsHealthy(duration time.Duration) bool {
+  healthyT := time.Now().Add(-duration)
+  return self.LastSeen.After(healthyT)
+}
+
+type Initialized struct {
+  First time.Time
+}
+
 type Config struct {
   Me Peer
   Prefix string // the prefix for the remote state
