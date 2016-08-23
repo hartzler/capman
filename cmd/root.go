@@ -2,8 +2,6 @@ package cmd
 
 import (
 	"fmt"
-	"io"
-	"os"
 
 	"github.com/hartzler/capman/state"
 	"github.com/spf13/cobra"
@@ -12,6 +10,7 @@ import (
 var version string
 var name string
 
+// RootCmd is the main command to exec
 var RootCmd = &cobra.Command{
 	Use:   "capman",
 	Short: "Capman maintains an evented set of peers in consul.",
@@ -24,18 +23,13 @@ var RootCmd = &cobra.Command{
 var config = state.Config{
 	Me: state.Peer{
 		Host: "localhost",
-		Ip:   "127.0.0.1",
+		IP:   "127.0.0.1",
 	},
 	Prefix: "k8s/master/runtime/etcd",
 }
 
-type Cmd struct {
-	root *cobra.Command
-	Err  io.Writer
-	Out  io.Writer
-}
-
-func Init(name, version string) *Cmd {
+// Init sets up the version command
+func Init(name, version string) *cobra.Command {
 	// add version command
 	RootCmd.AddCommand(&cobra.Command{
 		Use:   "version",
@@ -48,13 +42,9 @@ func Init(name, version string) *Cmd {
 
 	RootCmd.PersistentFlags().StringVar(&config.Prefix, "prefix", "p", "prefix for peer state")
 	RootCmd.PersistentFlags().StringVar(&config.Me.Host, "host", "", "hostname for heartbeat")
-	RootCmd.PersistentFlags().StringVar(&config.Me.Ip, "ip", "", "ip for heartbeat")
+	RootCmd.PersistentFlags().StringVar(&config.Me.IP, "ip", "", "ip for heartbeat")
 
-	return &Cmd{
-		root: RootCmd,
-		Err:  os.Stderr,
-		Out:  os.Stdout,
-	}
+	return RootCmd
 }
 
 // configure the external state or exit out if invalid options specified

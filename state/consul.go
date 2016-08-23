@@ -1,7 +1,5 @@
 package state
 
-// consul backend driver for storing external state of peers
-
 import (
 	"encoding/json"
 	"fmt"
@@ -10,6 +8,7 @@ import (
 	"github.com/hashicorp/consul/api"
 )
 
+// consul backend driver for storing external state of peers
 type consul struct {
 	config Config
 	consul ConsulConfig
@@ -57,28 +56,31 @@ func (c *consul) Heartbeat() error {
 	return err
 }
 
-func (c *consul) IsInitialized() (Initialized, error) {
+func (c *consul) IsInitialized() (*Initialized, error) {
 	fmt.Println("Checking if initial quorum was ever reached...")
 	var i Initialized
 	kv := c.client.KV()
 	pair, _, err := kv.Get(c.prefix("initialized"), nil)
 	if err != nil {
-		return i, err
+		return nil, err
+	}
+	if pair == nil {
+		return nil, nil
 	}
 	err = json.Unmarshal(pair.Value, &i)
-	return i, err
+	return &i, err
 }
 
-func (c *consul) SetInitialized() (Initialized, error) {
+func (c *consul) SetInitialized() (*Initialized, error) {
 	fmt.Println("Setting first quorum achieved...")
 	kv := c.client.KV()
 	i := Initialized{time.Now()}
 	bytes, err := json.Marshal(i)
 	if err != nil {
-		return i, err
+		return nil, err
 	}
 	_, err = kv.Put(&api.KVPair{Key: c.prefix("initialized"), Value: bytes}, nil)
-	return i, err
+	return &i, err
 }
 
 func (c *consul) Peers() ([]Peer, error) {

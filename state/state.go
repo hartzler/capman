@@ -32,8 +32,8 @@ type Config struct {
 
 // ExternalState is the interface for dealing with the external state store.
 type ExternalState interface {
-	IsInitialized() (Initialized, error)
-	SetInitialized() (Initialized, error)
+	IsInitialized() (*Initialized, error)
+	SetInitialized() (*Initialized, error)
 	Heartbeat() error
 	Peers() ([]Peer, error)
 }
