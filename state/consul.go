@@ -56,34 +56,34 @@ func (c *consul) Heartbeat() error {
 	return err
 }
 
-func (c *consul) IsInitialized() (*Initialized, error) {
+func (c *consul) IsBootstrap() (*Bootstrap, error) {
 	fmt.Println("Checking if initial quorum was ever reached...")
-	var i Initialized
+	var b Bootstrap
 	kv := c.client.KV()
-	pair, _, err := kv.Get(c.prefix("initialized"), nil)
+	pair, _, err := kv.Get(c.prefix("bootstrap"), nil)
 	if err != nil {
 		return nil, err
 	}
 	if pair == nil {
 		return nil, nil
 	}
-	err = json.Unmarshal(pair.Value, &i)
-	return &i, err
+	err = json.Unmarshal(pair.Value, &b)
+	return &b, err
 }
 
-func (c *consul) SetInitialized() (*Initialized, error) {
-	fmt.Println("Setting first quorum achieved...")
+func (c *consul) SetBootstrap() (*Bootstrap, error) {
+	fmt.Println("Marking cluster as boostrapped...")
 	kv := c.client.KV()
-	i := Initialized{time.Now()}
-	bytes, err := json.Marshal(i)
+	b := Bootstrap{time.Now()}
+	bytes, err := json.Marshal(b)
 	if err != nil {
 		return nil, err
 	}
-	_, err = kv.Put(&api.KVPair{Key: c.prefix("initialized"), Value: bytes}, nil)
-	return &i, err
+	_, err = kv.Put(&api.KVPair{Key: c.prefix("bootstrap"), Value: bytes}, nil)
+	return &b, err
 }
 
-func (c *consul) Peers() ([]Peer, error) {
+func (c *consul) Peers() (Peers, error) {
 	fmt.Println("Retrieving list of peers...")
 	kv := c.client.KV()
 	pairs, _, err := kv.List(c.prefix("peers"), nil)

@@ -19,8 +19,22 @@ func (p Peer) IsHealthy(duration time.Duration) bool {
 	return p.LastSeen.After(healthyT)
 }
 
-// Initialized stores information about when the cluster was
-type Initialized struct {
+// Peers is a slice of peers
+type Peers []Peer
+
+// Healthy returns the list of Healthy Peers
+func (ps Peers) Healthy(duration time.Duration) Peers {
+	peers := make(Peers, 0)
+	for i := range ps {
+		if ps[i].IsHealthy(duration) {
+			peers = append(peers, ps[i])
+		}
+	}
+	return peers
+}
+
+// Bootstrap stores information about when the cluster was first bootstrap'd
+type Bootstrap struct {
 	First time.Time
 }
 
@@ -32,8 +46,8 @@ type Config struct {
 
 // ExternalState is the interface for dealing with the external state store.
 type ExternalState interface {
-	IsInitialized() (*Initialized, error)
-	SetInitialized() (*Initialized, error)
+	IsBootstrap() (*Bootstrap, error)
+	SetBootstrap() (*Bootstrap, error)
 	Heartbeat() error
-	Peers() ([]Peer, error)
+	Peers() (Peers, error)
 }

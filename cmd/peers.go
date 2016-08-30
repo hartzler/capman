@@ -27,7 +27,7 @@ var peersCmd = cobra.Command{
 			if peer.LastSeen.After(healthyT) {
 				health = "healthy"
 			}
-			fmt.Println(peer.Host, peer.IP, health)
+			fmt.Println(peer.Host, peer.IP, health, peer.LastSeen, healthyT)
 		}
 	},
 }
